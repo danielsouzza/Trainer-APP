@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Trainer-app</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Senha</string>
+    <string name="enter">Entrar</string>
+    <string name="create_account">Criar conta?</string>
+    <string name="choose_user">Selecionar tipo de Usuário</string>
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="trainer">Treinador</string>
+    <string name="athlete">Aluno</string>
+    <string name="info_user">Informações de Usuário</string>
+    <string name="username_hint">Nome de Usuário</string>
+    <string name="password_chek_hint">Confirmar senha</string>
+    <string name="fullname_hint">Nome completo</string>
+    <string name="birthdayState_hint">Data de nascimento</string>
+    <string name="title_activity_home">Home</string>
+    <string name="name_app">Trainer</string>
+    <string name="cref_hint">Cref</string>
+    <string name="institution_hint">Instituição</string>
+    <string name="graduation_year_hint">Ano da formação</string>
+    <string name="info_student">Informações do Aluno</string>
+    <string name="info_trainer">Informações do Treinador</string>
+    <string name="title_activity_create_and_edit_program">CreateAndEditProgramActivity</string>
+</resources>
