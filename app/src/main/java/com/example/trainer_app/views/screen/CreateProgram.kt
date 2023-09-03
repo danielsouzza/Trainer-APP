@@ -4,11 +4,9 @@ import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -36,7 +34,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DismissDirection
@@ -50,9 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -70,17 +65,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.trainer_app.R
 import com.example.trainer_app.data.models.Exercise
 import com.example.trainer_app.views.components.DayOfWeek
 import com.example.trainer_app.views.components.DefaultButton
+import com.example.trainer_app.views.components.SelectStudentDialog
 import com.example.trainer_app.views.components.SelectedStudentCard
 import com.example.trainer_app.views.components.TopBarAction
 import com.example.trainer_app.views.theme.Background
 import com.example.trainer_app.views.theme.BackgroundTopBar
-import com.example.trainer_app.views.theme.Background_variant
 import com.example.trainer_app.views.theme.Black90
 import com.example.trainer_app.views.theme.ButtonColors
 import com.example.trainer_app.views.theme.Orange
@@ -89,17 +83,18 @@ import com.example.trainer_app.views.theme.Secondary
 import com.example.trainer_app.views.theme.Secondary_1
 import com.example.trainer_app.views.theme.Secondary_2
 import com.example.trainer_app.views.theme.Secondary_3
+import com.example.trainer_app.views.theme.Secondary_4
 import com.example.trainer_app.views.theme.Shapes
 import com.example.trainer_app.views.theme.ShapesCards
 import com.example.trainer_app.views.theme.TextColor
-import com.example.trainer_app.views.view_model.ProgramViewModel
+import com.example.trainer_app.views.view_model.CreateProgramViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CreateProgram(
-    viewModel: ProgramViewModel,
+    viewModel: CreateProgramViewModel,
     navigator: NavHostController
 ) {
 
@@ -110,12 +105,15 @@ fun CreateProgram(
         mutableStateOf("Novo treino")
     }
 
+    var expandedSelectExercises = remember {
+        mutableStateOf(false)
+    }
     var expandedSelectStudent = remember {
         mutableStateOf(false)
     }
 
     val activity = LocalView.current.context as Activity
-    var colorBgExpandDialog = if (expandedSelectStudent.value) Black90 else Color.Transparent
+    var colorBgExpandDialog = if (expandedSelectExercises.value || expandedSelectStudent.value) Black90 else Color.Transparent
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold (
@@ -159,6 +157,7 @@ fun CreateProgram(
                     viewModel=viewModel,
                     selectedDays= selectedDays,
                     expandedSelectStudent = expandedSelectStudent,
+                    expandedSelectExercise= expandedSelectExercises,
                     activity = activity
                 ){day->
                     selectedDays = if (selectedDays.contains(day)) {
@@ -177,16 +176,26 @@ fun CreateProgram(
                 .fillMaxSize()
         ){
             AnimatedVisibility(
-                visible = expandedSelectStudent.value,
+                visible = expandedSelectExercises.value,
                 enter = fadeIn() + slideInVertically { fullHeight -> fullHeight },
                 exit = fadeOut() + slideOutVertically { fullHeight -> fullHeight }
             ) {
 
                 SelectExercisesDialog(viewModel){
+                    expandedSelectExercises.value = false
+                    activity.window.statusBarColor = Background.toArgb()
+                }
+            }
+            AnimatedVisibility(
+                visible = expandedSelectStudent.value,
+                enter = fadeIn() + slideInVertically { fullHeight -> fullHeight },
+                exit = fadeOut() + slideOutVertically { fullHeight -> fullHeight }
+            ) {
+
+                SelectStudentDialog(viewModel){
                     expandedSelectStudent.value = false
                     activity.window.statusBarColor = Background.toArgb()
                 }
-
             }
         }
     }
@@ -197,15 +206,13 @@ fun CreateProgram(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ContentForm(
-    viewModel: ProgramViewModel,
+    viewModel: CreateProgramViewModel,
     selectedDays:Set<DayOfWeek>,
+    expandedSelectExercise: MutableState<Boolean>,
     expandedSelectStudent: MutableState<Boolean>,
     activity: Activity,
     onDaySelected: (DayOfWeek) -> Unit,
 ) {
-
-
-
 
     Surface(
         shape = ShapesCards.large,
@@ -227,12 +234,13 @@ fun ContentForm(
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 AddButton(){
-                    expandedSelectStudent.value = true
+                    expandedSelectExercise.value = true
                     activity.window.statusBarColor = Black90.toArgb()
                 }
                 Spacer(modifier = Modifier.width(10.dp))
-                SelectedStudentCard (){
-
+                SelectedStudentCard (viewModel){
+                    expandedSelectStudent.value = true
+                    activity.window.statusBarColor = Black90.toArgb()
                 }
 
             }
@@ -250,7 +258,7 @@ fun ContentForm(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ExercisesScroll(
-    viewModel: ProgramViewModel,
+    viewModel: CreateProgramViewModel,
 ){
 
 
@@ -535,8 +543,6 @@ fun DayItem(
     }
 }
 
-
-
 @Composable
 fun AddButton(
     addItem: ()->Unit
@@ -546,7 +552,7 @@ fun AddButton(
         shape = Shapes.medium,
         modifier = Modifier.height(60.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Secondary
+            containerColor = Secondary_4
         ),
         contentPadding = PaddingValues(
             start = 10.dp,

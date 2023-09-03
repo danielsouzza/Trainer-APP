@@ -3,6 +3,7 @@ package com.example.trainer_app.data.network
 import com.example.trainer_app.data.models.Credentials
 import com.example.trainer_app.data.models.Exercise
 import com.example.trainer_app.data.models.Token
+import com.example.trainer_app.data.models.TrainingProgram
 import com.example.trainer_app.data.models.User
 import com.example.trainer_app.data.models.UserAble
 import okhttp3.OkHttpClient
@@ -13,11 +14,13 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
     companion object{
-        private const val BASE_URL = "http://146.190.163.166/api/"
+        private const val BASE_URL = "http://192.168.12.227 /api/" //146.190.163.166
         var providerRetrofit: ApiService = createProviderRetrofit("")
 
         private fun createProviderRetrofit(token: String):ApiService {
@@ -47,6 +50,12 @@ interface ApiService {
     @POST("auth")
     suspend fun auth(@Body credentials: Credentials): Token
 
+    @GET("program/{id}")
+    suspend fun getProgram(@Path("id")id:Int): TrainingProgram
+
+    @POST("program/{id}")
+    suspend fun createProgram(@Body trainingProgram: TrainingProgram):ResponseBody
+
     @GET("users/me")
     suspend fun me(): User
 
@@ -56,4 +65,6 @@ interface ApiService {
     @GET("exercise")
     suspend fun getExercises(): List<Exercise>
 
+    @GET("trainer/students")
+    suspend fun getMyStudents(): List<User>
 }

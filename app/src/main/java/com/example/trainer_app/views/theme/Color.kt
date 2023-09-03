@@ -14,6 +14,7 @@ val Pink40 = Color(0xFF7D5260)
 val Background = Color(0xFFECECEC)
 
 val Primary = Color(0xFF8524DC)
+val Primary_1 = Color(0xFFB67CEA)
 val ContainerButton = Color(0xFF37474F)
 
 val TextColor = Color(0xFF455A64)
@@ -30,4 +31,5 @@ val Secondary = Color(0xFF07B0F2)
 val Secondary_1 = Color(0x3B07B0F2)
 val Secondary_2 = Color(0xFF8DDBF9)
 val Secondary_3 = Color(0xFFDBF2FC)
+val Secondary_4 = Color(0x7507B0F2)
 val Black90 = Color(0x9E000000)

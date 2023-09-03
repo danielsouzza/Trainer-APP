@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,19 +21,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.trainer_app.R
-import com.example.trainer_app.views.theme.Primary
+import com.example.trainer_app.views.theme.Primary_1
 import com.example.trainer_app.views.theme.Shapes
+import com.example.trainer_app.views.view_model.CreateProgramViewModel
 
 @Composable
 fun SelectedStudentCard(
+    viewModel: CreateProgramViewModel,
     onClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf("Student") }
+    val userSelected by viewModel.studentSelected.collectAsState()
+
 
     Column(
         modifier = Modifier
@@ -41,7 +44,7 @@ fun SelectedStudentCard(
             onClick = { onClick() },
             shape = Shapes.medium,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Primary
+                containerColor = Primary_1
             ),
             contentPadding = PaddingValues(
                 start = 20.dp,
@@ -52,8 +55,8 @@ fun SelectedStudentCard(
             modifier = Modifier.height(60.dp)
         ) {
             BasicTextField(
-                value = selectedItem,
-                onValueChange = { selectedItem = it },
+                value = userSelected.name,
+                onValueChange = { },
                 readOnly = true,
                 enabled = false,
                 textStyle = TextStyle(
@@ -71,10 +74,4 @@ fun SelectedStudentCard(
             )
         }
     }
-}
-
-@Composable
-@Preview
-fun Preview(){
-    SelectedStudentCard(){}
 }
